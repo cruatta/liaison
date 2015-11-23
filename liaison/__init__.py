@@ -26,7 +26,6 @@ def gauge_service_health(srv_tag):
 
     if tag:
         _, health_service = c.health.service(srv, tag=tag)
-
     else:
         _, health_service = c.health.service(srv)
 
@@ -71,7 +70,7 @@ def gauge_service_health(srv_tag):
                     float((failing / (ok + failing))))
 
 
-def loop(pool_size=10, pause=30):
+def loop(pause=30):
     """
 
     :param pool_size:
