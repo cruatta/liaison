@@ -71,6 +71,7 @@ def check_service(srv_tag):
                     float((ok / (ok + failing))))
             s.gauge('consul.{dc}.service.{srv}.failing.percent'.format(srv=srv, dc=dc),
                     float((failing / (ok + failing))))
+    return
 
 
 def loop(pool_size=None, pause=30):
