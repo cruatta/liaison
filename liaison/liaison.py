@@ -77,7 +77,7 @@ def loop(pool_size=None, pause=30):
     """
 
     :param pool_size:
-    :param pause_time:
+    :param pause:
     :return:
     """
 
@@ -101,6 +101,8 @@ def loop(pool_size=None, pause=30):
         else:
             p.map(check_service, [x.pop() for _ in xrange(len(x))])
         time.sleep(pause)
+
+    p.terminate()
 
 if __name__ == "__main__":
     while True:
