@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 class LiaisonConfig(object):
     def __init__(self, pool_size=4, pause_time=30):
         self.pool_size = pool_size
@@ -16,6 +18,9 @@ class ConsulConfig(object):
         self.consistency = consistency
         self.dc = dc
         self.verify = verify
+
+    def kwargs(self):
+        return self.__dict__
 
 class StatsdConfig(object):
     def __init__(self, host='127.0.0.1', port=8125):
