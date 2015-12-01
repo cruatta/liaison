@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 class LiaisonConfig(object):
     def __init__(self, pool_size=4, pause_time=30):
         self.pool_size = pool_size

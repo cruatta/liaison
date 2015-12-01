@@ -113,9 +113,9 @@ def loop(liaison_config, consul_config, statsd_config):
     p.join()
 
 if __name__ == "__main__":
-    liaison_config = LiaisonConfig()
-    consul_config = ConsulConfig()
-    statsd_config = StatsdConfig()
+    lc = LiaisonConfig()
+    cc = ConsulConfig()
+    sc = StatsdConfig()
 
     while True:
-        loop(liaison_config, consul_config, statsd_config)
+        loop(lc, cc, sc)
