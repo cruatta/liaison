@@ -13,8 +13,8 @@ def check_service(check_service_job):
     :param check_service_job: Dictionary containing job specification
     :type check_service_job: dict[str, str, ConsulConfig, StatsdConfig]
 
-    :return Integer return code
-    :rtype int
+    :return: Integer return code
+    :rtype: int
     """
 
     try:
