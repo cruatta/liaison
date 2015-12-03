@@ -1,26 +1,30 @@
 from config import LiaisonConfig, ConsulConfig, StatsdConfig
+import log
 
 import consul
 import statsd
-
 import multiprocessing
 import time
 
-# Liaison - Send consul stats to statsd
-# Simple Python implementation
+def check_service(check_service_job):
+    """
+    Check the availability of a consul service and send stats to StatsD.
 
-def check_service(job):
+    :param check_service_job: Dictionary containing job specification
+    :type check_service_job: dict[str, str, ConsulConfig, StatsdConfig]
+
+    :return Integer return code
+    :rtype int
     """
 
-    :param job: Tuple that looks something like this ((service, tag), consul config, statsd config)
-    :return:
-    """
-
-    print(job[0])
-    service = job[0][0]
-    tag = job[0][1]
-    consul_config = job[1]
-    statsd_config = job[2]
+    try:
+        service = check_service_job['service']
+        tag = check_service_job['tag']
+        consul_config = check_service_job['consul_config']
+        statsd_config = check_service_job['statsd_config']
+    except KeyError as e:
+        log.error(e.message)
+        return 2
 
     nodes = dict()
     ok = 0
@@ -29,12 +33,18 @@ def check_service(job):
     c = consul.Consul(**consul_config.kwargs())
     s = statsd.StatsClient(*statsd_config.args())
 
+    try:
+        dc = c.agent.self()['Config']['Datacenter']
+    except Exception as e:
+        log.error(e.message)
+        return 2
+
     if tag:
         _, health_service = c.health.service(service, tag=tag)
     else:
         _, health_service = c.health.service(service)
 
-    dc = c.agent.self()['Config']['Datacenter']
+    log.debug('Running service availability check on Service:{} Tag:{} DC:{}'.format(service, tag, dc))
 
     for node in health_service:
         name = node['Node']['Node']
@@ -75,38 +85,43 @@ def check_service(job):
                     float((ok / (ok + failing))))
             s.gauge('consul.{dc}.service.{srv}.failing.percent'.format(srv=service, dc=dc),
                     float((failing / (ok + failing))))
-    return
+
+    return 0
 
 
 def loop(liaison_config, consul_config, statsd_config):
     """
+    The main read loop.
 
-    :param liaison_config:
-    :param consul_config:
-    :param statsd_config:
-    :return:
+    :param liaison_config: A LiasonConfig object
+    :type liaison_config: LiaisonConfig
+
+    :param consul_config: A ConsulConfig object
+    :type consul_config: ConsulConfig
+
+    :param statsd_config: A StatsdConfig object
+    :type statsd_config: StatsdConfig
     """
 
-    pool_size = multiprocessing.cpu_count() if liaison_config.pool_size is None else liaison_config.pool_size
-
-    x = list()
     c = consul.Consul(**consul_config.kwargs())
     _, services = c.catalog.services()
 
+    check_service_jobs = list()
     for name, tags in services.iteritems():
         for tag in tags:
-            x.append((name, tag))
-        x.append((name, None))
+            check_service_jobs.append({'service': name, 'tag': tag,
+                                       'consul_config': consul_config, 'statsd_config': statsd_config})
+        check_service_jobs.append({'service': name, 'tag': None,
+                                   'consul_config': consul_config, 'statsd_config': statsd_config})
 
+    pool_size = multiprocessing.cpu_count() if liaison_config.pool_size is None else liaison_config.pool_size
     p = multiprocessing.Pool(pool_size)
 
-    while len(x) > 0:
-        if len(x) >= pool_size:
-            p.map(check_service,
-                  ((x.pop(), consul_config, statsd_config) for _ in xrange(pool_size)))
+    while len(check_service_jobs) > 0:
+        if len(check_service_jobs) >= pool_size:
+            p.map(check_service, [check_service_jobs.pop() for _ in xrange(pool_size)])
         else:
-            p.map(check_service,
-                  ((x.pop(), consul_config, statsd_config) for _ in xrange(len(x))))
+            p.map(check_service, [check_service_jobs.pop() for _ in xrange(len(check_service_jobs))])
         time.sleep(liaison_config.pause_time)
 
     p.close()
