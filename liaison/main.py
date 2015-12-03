@@ -23,7 +23,7 @@ def check_service(check_service_job):
         consul_config = check_service_job['consul_config']
         statsd_config = check_service_job['statsd_config']
     except KeyError as e:
-        log.error(e.message)
+        log.error("Missing key {} in check_service_job".format(e))
         return 2
 
     nodes = dict()
@@ -35,8 +35,8 @@ def check_service(check_service_job):
 
     try:
         dc = c.agent.self()['Config']['Datacenter']
-    except Exception as e:
-        log.error(e.message)
+    except KeyError as e:
+        log.error("Missing key {} in Agent self and cannot get DC".format(e))
         return 2
 
     if tag:
