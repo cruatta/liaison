@@ -31,7 +31,7 @@ def debug(log):
     Detailed error messages describing the exact state of
     internal variables that may be helpful when debugging problems.
 
-    :type log str
+    :type log: str
     :param log: Structured log message
     """
     write(syslog.LOG_DEBUG, 'debug', '{}'.format(log))
@@ -41,7 +41,7 @@ def info(log):
      For completely informational purposes, the application is
      simply logging what it is doing.
 
-    :type log str
+    :type log: str
     :param log: Structured log message
     """
     write(syslog.LOG_INFO, 'info', '{}'.format(log))
@@ -51,7 +51,7 @@ def warning(log):
     The application encountered a situation that it was not expecting,
     but it can continue.
 
-    :type log str
+    :type log: str
     :param log: Structured log message
     """
     write(syslog.LOG_WARNING, 'warning', '{}'.format(log))
@@ -60,7 +60,7 @@ def error(log):
     """
     An error occurred that should be logged, however it is not critical.
 
-    :type log str
+    :type log: str
     :param log: Structured log message
     """
     write(syslog.LOG_ERR, 'error', '{}'.format(log))
@@ -69,7 +69,7 @@ def critical(log):
     """
     A serious error occurred during application execution.
 
-    :type log str
+    :type log: str
     :param log: Structured log message
     """
     write(syslog.LOG_CRIT, 'info', '{}'.format(log))
