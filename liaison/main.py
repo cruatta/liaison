@@ -122,7 +122,7 @@ def loop(liaison_config, consul_config, statsd_config):
             p.map(check_service, [check_service_jobs.pop() for _ in xrange(pool_size)])
         else:
             p.map(check_service, [check_service_jobs.pop() for _ in xrange(len(check_service_jobs))])
-        time.sleep(liaison_config.pause_time)
+        time.sleep(liaison_config.sleep)
 
     p.close()
     p.join()
