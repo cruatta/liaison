@@ -2,7 +2,7 @@ class LiaisonConfig(object):
     """
     Configuration object for Liaison.
     """
-    def __init__(self, pool_size=4, sleep=30):
+    def __init__(self, pool_size=1, sleep=1):
         """
         :param pool_size: Number of checks to run in parallel
         :type pool_size: int

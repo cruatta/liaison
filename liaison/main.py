@@ -126,11 +126,3 @@ def loop(liaison_config, consul_config, statsd_config):
 
     p.close()
     p.join()
-
-if __name__ == "__main__":
-    lc = LiaisonConfig()
-    cc = ConsulConfig()
-    sc = StatsdConfig()
-
-    while True:
-        loop(lc, cc, sc)

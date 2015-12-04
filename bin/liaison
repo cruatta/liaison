@@ -1,0 +1,15 @@
+#!/usr/bin/python2.7
+from liaison.main import loop
+from liaison.config import LiaisonConfig, ConsulConfig, StatsdConfig
+
+def main():
+    lc = LiaisonConfig()
+    cc = ConsulConfig()
+    sc = StatsdConfig()
+
+    while True:
+        loop(lc, cc, sc)
+
+
+if __name__ == "__main__":
+    main()
