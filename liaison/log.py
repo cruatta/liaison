@@ -3,6 +3,7 @@ import sys
 import json
 import time
 
+
 def write(pri, level, message):
     """
     Encode a log message as a JSON object and write it to syslog.
@@ -26,6 +27,7 @@ def write(pri, level, message):
     if not sys.stdout.isatty():
         print(log)
 
+
 def debug(log):
     """
     Detailed error messages describing the exact state of
@@ -35,6 +37,7 @@ def debug(log):
     :param log: Structured log message
     """
     write(syslog.LOG_DEBUG, 'debug', '{}'.format(log))
+
 
 def info(log):
     """
@@ -46,6 +49,7 @@ def info(log):
     """
     write(syslog.LOG_INFO, 'info', '{}'.format(log))
 
+
 def warning(log):
     """
     The application encountered a situation that it was not expecting,
@@ -56,6 +60,7 @@ def warning(log):
     """
     write(syslog.LOG_WARNING, 'warning', '{}'.format(log))
 
+
 def error(log):
     """
     An error occurred that should be logged, however it is not critical.
@@ -64,6 +69,7 @@ def error(log):
     :param log: Structured log message
     """
     write(syslog.LOG_ERR, 'error', '{}'.format(log))
+
 
 def critical(log):
     """

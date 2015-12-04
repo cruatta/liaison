@@ -1,10 +1,10 @@
-from config import LiaisonConfig, ConsulConfig, StatsdConfig
 import log
 
 import consul
 import statsd
 import multiprocessing
 import time
+
 
 def check_service(check_service_job):
     """
@@ -44,7 +44,8 @@ def check_service(check_service_job):
     else:
         _, health_service = c.health.service(service)
 
-    log.debug('Running service availability check on Service:{} Tag:{} DC:{}'.format(service, tag, dc))
+    log.debug('Running service availability check on '
+              'Service:{} Tag:{} DC:{}'.format(service, tag, dc))
 
     for node in health_service:
         name = node['Node']['Node']
@@ -70,21 +71,26 @@ def check_service(check_service_job):
         else:
             ok += 1
     if tag:
-        s.gauge('consul.{dc}.service.{srv}.{tag}.ok.count'.format(srv=service, tag=tag, dc=dc), ok)
-        s.gauge('consul.{dc}.service.{srv}.{tag}.failing.count'.format(srv=service, tag=tag, dc=dc), failing)
+        s.gauge('consul.{dc}.service.{srv}.{tag}.ok.count'.format(
+            srv=service, tag=tag, dc=dc), ok)
+        s.gauge('consul.{dc}.service.{srv}.{tag}.failing.count'.format(
+            srv=service, tag=tag, dc=dc), failing)
         if ok + failing > 0:
-            s.gauge('consul.{dc}.service.{srv}.{tag}.ok.percent'.format(srv=service, tag=tag, dc=dc),
-                    float((ok / (ok + failing))))
-            s.gauge('consul.{dc}.service.{srv}.{tag}.failing.percent'.format(srv=service, tag=tag, dc=dc),
-                    float((failing / (ok + failing))))
+            s.gauge('consul.{dc}.service.{srv}.{tag}.ok.percent'.format(
+                srv=service, tag=tag, dc=dc), float((ok / (ok + failing))))
+            s.gauge('consul.{dc}.service.{srv}.{tag}.failing.percent'.format(
+                srv=service, tag=tag, dc=dc),
+                float((failing / (ok + failing))))
     else:
-        s.gauge('consul.{dc}.service.{srv}.ok.count'.format(srv=service, dc=dc), ok)
-        s.gauge('consul.{dc}.service.{srv}.failing.count'.format(srv=service, dc=dc), failing)
+        s.gauge('consul.{dc}.service.{srv}.ok.count'.format(
+            srv=service, dc=dc), ok)
+        s.gauge('consul.{dc}.service.{srv}.failing.count'.format(
+            srv=service, dc=dc), failing)
         if ok + failing > 0:
-            s.gauge('consul.{dc}.service.{srv}.ok.percent'.format(srv=service, dc=dc),
-                    float((ok / (ok + failing))))
-            s.gauge('consul.{dc}.service.{srv}.failing.percent'.format(srv=service, dc=dc),
-                    float((failing / (ok + failing))))
+            s.gauge('consul.{dc}.service.{srv}.ok.percent'.format(
+                srv=service, dc=dc), float((ok / (ok + failing))))
+            s.gauge('consul.{dc}.service.{srv}.failing.percent'.format(
+                srv=service, dc=dc), float((failing / (ok + failing))))
 
     return 0
 
@@ -104,24 +110,32 @@ def loop(liaison_config, consul_config, statsd_config):
     """
 
     c = consul.Consul(**consul_config.kwargs())
-    _, services = c.catalog.services()
+    index, services = c.catalog.services()
 
     check_service_jobs = list()
     for name, tags in services.iteritems():
         for tag in tags:
             check_service_jobs.append({'service': name, 'tag': tag,
-                                       'consul_config': consul_config, 'statsd_config': statsd_config})
+                                       'consul_config': consul_config,
+                                       'statsd_config': statsd_config})
         check_service_jobs.append({'service': name, 'tag': None,
-                                   'consul_config': consul_config, 'statsd_config': statsd_config})
+                                   'consul_config': consul_config,
+                                   'statsd_config': statsd_config})
 
-    pool_size = multiprocessing.cpu_count() if liaison_config.pool_size is None else liaison_config.pool_size
+    if liaison_config.pool_size is None:
+        pool_size = multiprocessing.cpu_count()
+    else:
+        pool_size = liaison_config.pool_size
+
     p = multiprocessing.Pool(pool_size)
 
     while len(check_service_jobs) > 0:
         if len(check_service_jobs) >= pool_size:
-            p.map(check_service, [check_service_jobs.pop() for _ in xrange(pool_size)])
+            p.map(check_service, [check_service_jobs.pop()
+                                  for _ in xrange(pool_size)])
         else:
-            p.map(check_service, [check_service_jobs.pop() for _ in xrange(len(check_service_jobs))])
+            p.map(check_service, [check_service_jobs.pop()
+                                  for _ in xrange(len(check_service_jobs))])
         time.sleep(liaison_config.sleep)
 
     p.close()

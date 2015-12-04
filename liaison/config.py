@@ -56,6 +56,7 @@ class ConsulConfig(object):
     def kwargs(self):
         return self.__dict__
 
+
 class StatsdConfig(object):
     """
     Configuration object for StatsD.
@@ -74,4 +75,3 @@ class StatsdConfig(object):
 
     def args(self):
         return [self.host, self.port]
-
