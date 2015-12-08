@@ -71,6 +71,10 @@ class ConsulConfig(object):
         self.verify = verify
 
     def kwargs(self):
+        """
+        :return Dictionary of consul configuration
+        :rtype: dict
+        """
         return self.__dict__
 
 
@@ -91,9 +95,21 @@ class StatsdConfig(object):
         self.port = port
 
     def args(self):
+        """
+        :return: List of host and port for statsd
+        :rtype: [str, int]
+
+        """
         return [self.host, self.port]
 
 def load_config(path):
+    """
+    :param path: Path to configuration file
+    :type path: str
+
+    :return: A LiaisonConfig object
+    :rtype: LiaisonConfig
+    """
     with open(path) as f:
         config = json.load(f)
 
