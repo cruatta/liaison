@@ -1,14 +1,19 @@
 #!/usr/bin/python2.7
 from liaison.main import loop
-from liaison.config import LiaisonConfig, ConsulConfig, StatsdConfig
+from liaison.config import load_config, LiaisonConfig
+import argparse
 
 def main():
-    lc = LiaisonConfig()
-    cc = ConsulConfig()
-    sc = StatsdConfig()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', help='Configuration file path')
+    args = parser.parse_args()
+    if 'config' in args:
+        lc = load_config(args.config)
+    else:
+        lc = LiaisonConfig()
 
     while True:
-        loop(lc, cc, sc)
+        loop(lc)
 
 if __name__ == "__main__":
     main()
