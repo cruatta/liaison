@@ -1,18 +1,35 @@
+import json
+
 class LiaisonConfig(object):
     """
-    Configuration object for Liaison.
+    Configuration object for the Liaison app itself.
     """
-    def __init__(self, pool_size=1, sleep=1):
+    def __init__(self, pool_size=1, sleep=1, consul_config=None, statsd_config=None):
         """
         :param pool_size: Number of checks to run in parallel
         :type pool_size: int
 
         :param sleep: Time to sleep between checks in the main loop in seconds
         :type sleep: float
+
+        :param consul_config: Consul Configuration object
+        :type consul_config: ConsulConfig
+
+        :param statsd_config: Statsd Configuration object
+        :type statsd_config: StatsdConfig
         """
         self.pool_size = pool_size
         self.sleep = sleep
 
+        if consul_config is type(ConsulConfig):
+            self.consul_config = consul_config
+        else:
+            self.consul_config = ConsulConfig()
+
+        if statsd_config is type(StatsdConfig):
+            self.statsd_config = statsd_config
+        else:
+            self.statsd_config = StatsdConfig()
 
 class ConsulConfig(object):
     """
@@ -75,3 +92,18 @@ class StatsdConfig(object):
 
     def args(self):
         return [self.host, self.port]
+
+def load_config(path):
+    with open(path) as f:
+        config = json.load(f)
+
+    pool_size = config['pool_size']
+    sleep = config['sleep']
+    consul_config = ConsulConfig(**config['consul_config'])
+    statsd_config = StatsdConfig(**config['statsd_config'])
+    lc = LiaisonConfig(pool_size=pool_size,
+                       sleep=sleep,
+                       consul_config=consul_config,
+                       statsd_config=statsd_config)
+
+    return lc

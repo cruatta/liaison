@@ -1,12 +1,10 @@
 {
-  "consul": {
+  "consul_config": {
     "consistency": "stale"
   },
-  "liaison": {
-    "pool_size": 10,
-    "sleep": 10
-  },
-  "statsd": {
+  "statsd_config": {
     "port": 8135
-  }
+  },
+  "pool_size": 10,
+  "sleep": 10
 }

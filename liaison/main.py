@@ -95,19 +95,16 @@ def check_service(check_service_job):
     return 0
 
 
-def loop(liaison_config, consul_config, statsd_config):
+def loop(liaison_config):
     """
     The main read loop.
 
     :param liaison_config: A LiasonConfig object
     :type liaison_config: LiaisonConfig
-
-    :param consul_config: A ConsulConfig object
-    :type consul_config: ConsulConfig
-
-    :param statsd_config: A StatsdConfig object
-    :type statsd_config: StatsdConfig
     """
+
+    consul_config = liaison_config.consul_config
+    statsd_config = liaison_config.statsd_config
 
     c = consul.Consul(**consul_config.kwargs())
     index, services = c.catalog.services()
