@@ -39,13 +39,14 @@ def check_service(check_service_job):
         log.error("Missing key {} in Agent self and cannot get DC".format(e))
         return 2
 
+    log.debug('Running service availability check on '
+              'Service:{} Tag:{} DC:{}'.format(service, tag, dc))
+
     if tag:
         _, health_service = c.health.service(service, tag=tag)
     else:
         _, health_service = c.health.service(service)
 
-    log.debug('Running service availability check on '
-              'Service:{} Tag:{} DC:{}'.format(service, tag, dc))
 
     for node in health_service:
         name = node['Node']['Node']
@@ -71,25 +72,25 @@ def check_service(check_service_job):
         else:
             ok += 1
     if tag:
-        s.gauge('consul.{dc}.service.{srv}.{tag}.ok.count'.format(
+        s.gauge('consul.service.{dc}.{srv}.{tag}.ok.count'.format(
             srv=service, tag=tag, dc=dc), ok)
-        s.gauge('consul.{dc}.service.{srv}.{tag}.failing.count'.format(
+        s.gauge('consul.service.{dc}.{srv}.{tag}.failing.count'.format(
             srv=service, tag=tag, dc=dc), failing)
         if ok + failing > 0:
-            s.gauge('consul.{dc}.service.{srv}.{tag}.ok.percent'.format(
+            s.gauge('consul.service.{dc}.{srv}.{tag}.ok.percent'.format(
                 srv=service, tag=tag, dc=dc), float((ok / (ok + failing))))
-            s.gauge('consul.{dc}.service.{srv}.{tag}.failing.percent'.format(
+            s.gauge('consul.service.{dc}.{srv}.{tag}.failing.percent'.format(
                 srv=service, tag=tag, dc=dc),
                 float((failing / (ok + failing))))
     else:
-        s.gauge('consul.{dc}.service.{srv}.ok.count'.format(
+        s.gauge('consul.service.{dc}.{srv}.ok.count'.format(
             srv=service, dc=dc), ok)
-        s.gauge('consul.{dc}.service.{srv}.failing.count'.format(
+        s.gauge('consul.service.{dc}.{srv}.failing.count'.format(
             srv=service, dc=dc), failing)
         if ok + failing > 0:
-            s.gauge('consul.{dc}.service.{srv}.ok.percent'.format(
+            s.gauge('consul.service.{dc}.{srv}.ok.percent'.format(
                 srv=service, dc=dc), float((ok / (ok + failing))))
-            s.gauge('consul.{dc}.service.{srv}.failing.percent'.format(
+            s.gauge('consul.service.{dc}.{srv}.failing.percent'.format(
                 srv=service, dc=dc), float((failing / (ok + failing))))
 
     return 0
