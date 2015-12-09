@@ -1,3 +1,4 @@
+from __future__ import print_function
 import syslog
 import sys
 import json
@@ -25,7 +26,11 @@ def write(pri, level, message):
     syslog.openlog('liaison')
     syslog.syslog(pri, log)
     if not sys.stdout.isatty():
-        print(log)
+        if pri in [syslog.LOG_DEBUG, syslog.LOG_INFO]:
+            print(log, file=sys.stderr)
+        else:
+            print(log)
+
 
 
 def debug(log):
