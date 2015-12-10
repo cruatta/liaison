@@ -1,10 +1,12 @@
 import json
 
+
 class LiaisonConfig(object):
     """
     Configuration object for the Liaison app itself.
     """
-    def __init__(self, pool_size=1, sleep=1, consul_config=None, statsd_config=None):
+    def __init__(self, pool_size=1, sleep=1, consul_config=None,
+                 statsd_config=None):
         """
         :param pool_size: Number of checks to run in parallel
         :type pool_size: int
@@ -30,6 +32,7 @@ class LiaisonConfig(object):
             self.statsd_config = statsd_config
         else:
             self.statsd_config = StatsdConfig()
+
 
 class ConsulConfig(object):
     """
@@ -101,6 +104,7 @@ class StatsdConfig(object):
 
         """
         return [self.host, self.port]
+
 
 def load_config(path):
     """

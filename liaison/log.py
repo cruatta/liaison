@@ -32,7 +32,6 @@ def write(pri, level, message):
             print(log)
 
 
-
 def debug(log):
     """
     Detailed error messages describing the exact state of
@@ -41,7 +40,7 @@ def debug(log):
     :type log: str
     :param log: Structured log message
     """
-    write(syslog.LOG_DEBUG, 'debug', '{}'.format(log))
+    write(syslog.LOG_DEBUG, 'debug', '{log}'.format(log=log))
 
 
 def info(log):
@@ -52,7 +51,7 @@ def info(log):
     :type log: str
     :param log: Structured log message
     """
-    write(syslog.LOG_INFO, 'info', '{}'.format(log))
+    write(syslog.LOG_INFO, 'info', '{log}'.format(log=log))
 
 
 def warning(log):
@@ -63,7 +62,7 @@ def warning(log):
     :type log: str
     :param log: Structured log message
     """
-    write(syslog.LOG_WARNING, 'warning', '{}'.format(log))
+    write(syslog.LOG_WARNING, 'warning', '{log}'.format(log=log))
 
 
 def error(log):
@@ -73,7 +72,7 @@ def error(log):
     :type log: str
     :param log: Structured log message
     """
-    write(syslog.LOG_ERR, 'error', '{}'.format(log))
+    write(syslog.LOG_ERR, 'error', '{log}'.format(log=log))
 
 
 def critical(log):
@@ -83,4 +82,4 @@ def critical(log):
     :type log: str
     :param log: Structured log message
     """
-    write(syslog.LOG_CRIT, 'info', '{}'.format(log))
+    write(syslog.LOG_CRIT, 'info', '{log}'.format(log=log))

@@ -23,7 +23,7 @@ def check_service(check_service_job):
         consul_config = check_service_job['consul_config']
         statsd_config = check_service_job['statsd_config']
     except KeyError as e:
-        log.error("Missing key {} in check_service_job".format(e))
+        log.error("Missing key {e} in check_service_job".format(e=e))
         return 2
 
     nodes = dict()
@@ -36,17 +36,18 @@ def check_service(check_service_job):
     try:
         dc = c.agent.self()['Config']['Datacenter']
     except KeyError as e:
-        log.error("Missing key {} in Agent self and cannot get DC".format(e))
+        log.error("Missing key {e} in Agent self and cannot "
+                  "get DC".format(e=e))
         return 2
 
     log.debug('Running service availability check on '
-              'Service:{} Tag:{} DC:{}'.format(service, tag, dc))
+              'Service:{service} Tag:{tag} DC:{dc}'.format(service=service,
+                                                           tag=tag, dc=dc))
 
     if tag:
         _, health_service = c.health.service(service, tag=tag)
     else:
         _, health_service = c.health.service(service)
-
 
     for node in health_service:
         name = node['Node']['Node']
