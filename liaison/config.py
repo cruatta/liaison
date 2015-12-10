@@ -1,6 +1,6 @@
 import json
 import log
-import sys
+
 
 class LiaisonConfig(object):
     """
@@ -101,6 +101,7 @@ class SinkConfig(object):
         else:
             log.critical("Invalid Sink configuration.")
             raise Exception("Invalid Sink configuration.")
+
 
 class StatsdOptions(object):
     """
