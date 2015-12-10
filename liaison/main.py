@@ -1,7 +1,7 @@
 import log
+from sink import Sink
 
 import consul
-import statsd
 import multiprocessing
 import time
 
@@ -21,17 +21,17 @@ def check_service(check_service_job):
         service = check_service_job['service']
         tag = check_service_job['tag']
         consul_config = check_service_job['consul_config']
-        statsd_config = check_service_job['statsd_config']
+        sink_config = check_service_job['sink_config']
     except KeyError as e:
         log.error("Missing key {e} in check_service_job".format(e=e))
         return 2
 
     nodes = dict()
     ok = 0
-    failing = 0
+    critical = 0
 
     c = consul.Consul(**consul_config.kwargs())
-    s = statsd.StatsClient(*statsd_config.args())
+    s = Sink(sink_config)
 
     try:
         dc = c.agent.self()['Config']['Datacenter']
@@ -69,30 +69,17 @@ def check_service(check_service_job):
                 continue
 
         if nodes[name]['critical'] > 0:
-            failing += 1
+            critical += 1
         else:
             ok += 1
-    if tag:
-        s.gauge('consul.service.{dc}.{srv}.{tag}.ok.count'.format(
-            srv=service, tag=tag, dc=dc), ok)
-        s.gauge('consul.service.{dc}.{srv}.{tag}.failing.count'.format(
-            srv=service, tag=tag, dc=dc), failing)
-        if ok + failing > 0:
-            s.gauge('consul.service.{dc}.{srv}.{tag}.ok.percent'.format(
-                srv=service, tag=tag, dc=dc), float((ok / (ok + failing))))
-            s.gauge('consul.service.{dc}.{srv}.{tag}.failing.percent'.format(
-                srv=service, tag=tag, dc=dc),
-                float((failing / (ok + failing))))
-    else:
-        s.gauge('consul.service.{dc}.{srv}.ok.count'.format(
-            srv=service, dc=dc), ok)
-        s.gauge('consul.service.{dc}.{srv}.failing.count'.format(
-            srv=service, dc=dc), failing)
-        if ok + failing > 0:
-            s.gauge('consul.service.{dc}.{srv}.ok.percent'.format(
-                srv=service, dc=dc), float((ok / (ok + failing))))
-            s.gauge('consul.service.{dc}.{srv}.failing.percent'.format(
-                srv=service, dc=dc), float((failing / (ok + failing))))
+
+    s.ok_count(ok, service, dc, tag)
+    s.critical_count(critical, service, dc, tag)
+
+    if ok + critical > 0:
+        s.ok_percent(float((ok / (ok + critical))), service, dc, tag)
+        s.critical_percent(float((critical / (ok + critical))),
+                           service, dc, tag)
 
     return 0
 
@@ -106,7 +93,7 @@ def loop(liaison_config):
     """
 
     consul_config = liaison_config.consul_config
-    statsd_config = liaison_config.statsd_config
+    sink_config = liaison_config.sink_config
 
     c = consul.Consul(**consul_config.kwargs())
     index, services = c.catalog.services()
@@ -116,10 +103,10 @@ def loop(liaison_config):
         for tag in tags:
             check_service_jobs.append({'service': name, 'tag': tag,
                                        'consul_config': consul_config,
-                                       'statsd_config': statsd_config})
+                                       'sink_config': sink_config})
         check_service_jobs.append({'service': name, 'tag': None,
                                    'consul_config': consul_config,
-                                   'statsd_config': statsd_config})
+                                   'sink_config': sink_config})
 
     if liaison_config.pool_size is None:
         pool_size = multiprocessing.cpu_count()

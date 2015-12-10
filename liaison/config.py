@@ -1,12 +1,13 @@
 import json
-
+import log
+import sys
 
 class LiaisonConfig(object):
     """
     Configuration object for the Liaison app itself.
     """
     def __init__(self, pool_size=1, sleep=1, consul_config=None,
-                 statsd_config=None):
+                 sink_config=None):
         """
         :param pool_size: Number of checks to run in parallel
         :type pool_size: int
@@ -17,8 +18,8 @@ class LiaisonConfig(object):
         :param consul_config: Consul Configuration object
         :type consul_config: ConsulConfig
 
-        :param statsd_config: Statsd Configuration object
-        :type statsd_config: StatsdConfig
+        :param sink_config: Sink Configuration object
+        :type sink_config: SinkConfig
         """
         self.pool_size = pool_size
         self.sleep = sleep
@@ -28,10 +29,10 @@ class LiaisonConfig(object):
         else:
             self.consul_config = ConsulConfig()
 
-        if statsd_config is type(StatsdConfig):
-            self.statsd_config = statsd_config
+        if sink_config is type(SinkConfig):
+            self.sink_config = sink_config
         else:
-            self.statsd_config = StatsdConfig()
+            self.sink_config = SinkConfig()
 
 
 class ConsulConfig(object):
@@ -43,7 +44,6 @@ class ConsulConfig(object):
                  consistency='default',
                  dc=None, verify=True):
         """
-
         :param host: Consul agent host
         :type host: str
 
@@ -81,9 +81,30 @@ class ConsulConfig(object):
         return self.__dict__
 
 
-class StatsdConfig(object):
+class SinkConfig(object):
     """
-    Configuration object for StatsD.
+    Configuration object for Base Metrics Sink
+
+    :param type: Sink type (eg statsd)
+    :type type: str
+
+    :param options: Sink configuration
+    :type options: dict
+    """
+    def __init__(self, type="statsd", options=None):
+        self.type = type
+        if self.type == "statsd":
+            if not options:
+                self.opts = StatsdOptions()
+            else:
+                self.opts = StatsdOptions(**options)
+        else:
+            log.critical("Invalid Sink configuration.")
+            raise Exception("Invalid Sink configuration.")
+
+class StatsdOptions(object):
+    """
+    Configuration object for StatsD Sink.
     """
     def __init__(self, host='127.0.0.1', port=8125):
         """
@@ -119,11 +140,12 @@ def load_config(path):
 
     pool_size = config['pool_size']
     sleep = config['sleep']
-    consul_config = ConsulConfig(**config['consul_config'])
-    statsd_config = StatsdConfig(**config['statsd_config'])
+    consul_config = ConsulConfig(**config['consul'])
+    sink_config = SinkConfig(**config['sink'])
+
     lc = LiaisonConfig(pool_size=pool_size,
                        sleep=sleep,
                        consul_config=consul_config,
-                       statsd_config=statsd_config)
+                       sink_config=sink_config)
 
     return lc

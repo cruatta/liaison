@@ -1,9 +1,12 @@
 {
-  "consul_config": {
+  "consul": {
     "consistency": "stale"
   },
-  "statsd_config": {
-    "port": 8135
+  "sink": {
+    "type": "statsd",
+    "options": {
+      "port": 8135
+    }
   },
   "pool_size": 10,
   "sleep": 10
