@@ -83,4 +83,4 @@ def critical(log):
     :param log: Structured log message
     :type log: str
     """
-    write(syslog.LOG_CRIT, 'info', '{log}'.format(log=log))
+    write(syslog.LOG_CRIT, 'critical', '{log}'.format(log=log))
