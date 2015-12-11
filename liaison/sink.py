@@ -12,6 +12,21 @@ class StatsdSink(object):
         self.s = statsd.StatsClient(*options.args())
 
     def ok_count(self, value, service, dc, tag):
+        """
+
+        :param value: Number of "ok" (no critical checks) services
+        :type value: int
+
+        :param service: Name of the service
+        :type service: str
+
+        :param dc: Name of the datacenter
+        :type dc: str
+
+        :param tag: Optional tag for the service
+        :type tag: str
+
+        """
         if tag:
             self.s.gauge('consul.service.{dc}.{srv}.{tag}.ok.count'
                          .format(srv=service, tag=tag, dc=dc), value)
@@ -20,6 +35,21 @@ class StatsdSink(object):
                          .format(srv=service, dc=dc), value)
 
     def critical_count(self, value, service, dc, tag):
+        """
+
+        :param value: Number of "critical" (any critical checks) services
+        :type value: int
+
+        :param service: Name of the service
+        :type service: str
+
+        :param dc: Name of the datacenter
+        :type dc: str
+
+        :param tag: Optional tag for the service
+        :type tag: str
+
+        """
         if tag:
             self.s.gauge('consul.service.{dc}.{srv}.{tag}.critical.count'
                          .format(srv=service, tag=tag, dc=dc), value)
@@ -28,6 +58,22 @@ class StatsdSink(object):
                          .format(srv=service, dc=dc), value)
 
     def ok_percent(self, value, service, dc, tag):
+        """
+
+        :param value: Percent of "ok" (no critical checks) services
+        out of all instances of services
+        :type value: float
+
+        :param service: Name of the service
+        :type service: str
+
+        :param dc: Name of the datacenter
+        :type dc: str
+
+        :param tag: Optional tag for the service
+        :type tag: str
+
+        """
         if tag:
             self.s.gauge('consul.service.{dc}.{srv}.{tag}.ok.percent'
                          .format(srv=service, tag=tag, dc=dc), value)
@@ -36,6 +82,22 @@ class StatsdSink(object):
                          .format(srv=service, dc=dc), value)
 
     def critical_percent(self, value, service, dc, tag):
+        """
+
+        :param value: Percent of "critical" (any critical checks) services
+        out of all instances of services
+        :type value: float
+
+        :param service: Name of the service
+        :type service: str
+
+        :param dc: Name of the datacenter
+        :type dc: str
+
+        :param tag: Optional tag for the service
+        :type tag: str
+
+        """
         if tag:
             self.s.gauge('consul.service.{dc}.{srv}.{tag}.critical.percent'
                          .format(srv=service, tag=tag, dc=dc), value)
@@ -47,9 +109,8 @@ class StatsdSink(object):
 class Sink(object):
     def __init__(self, config):
         """
-        :param config:
+        :param config: A SinkConfig object
         :type config: SinkConfig
-        :return:
         """
 
         self.config = config
@@ -60,13 +121,75 @@ class Sink(object):
             raise Exception("Invalid Sink type.")
 
     def ok_count(self, value, service, dc, tag):
+        """
+
+        :param value: Number of "ok" (no critical checks) services
+        :type value: int
+
+        :param service: Name of the service
+        :type service: str
+
+        :param dc: Name of the datacenter
+        :type dc: str
+
+        :param tag: Optional tag for the service
+        :type tag: str
+
+        """
         self.sink.ok_count(value, service, dc, tag)
 
     def ok_percent(self, value, service, dc, tag):
+        """
+
+        :param value: Percent of "ok" (no critical checks) services
+        out of all instances of services
+        :type value: float
+
+        :param service: Name of the service
+        :type service: str
+
+        :param dc: Name of the datacenter
+        :type dc: str
+
+        :param tag: Optional tag for the service
+        :type tag: str
+
+        """
         self.sink.ok_percent(value, service, dc, tag)
 
     def critical_count(self, value, service, dc, tag):
+        """
+
+        :param value: Number of "critical" (any critical checks) services
+        :type value: int
+
+        :param service: Name of the service
+        :type service: str
+
+        :param dc: Name of the datacenter
+        :type dc: str
+
+        :param tag: Optional tag for the service
+        :type tag: str
+
+        """
         self.sink.critical_count(value, service, dc, tag)
 
     def critical_percent(self, value, service, dc, tag):
+        """
+
+        :param value: Percent of "critical" (any critical checks) services
+        out of all instances of services
+        :type value: float
+
+        :param service: Name of the service
+        :type service: str
+
+        :param dc: Name of the datacenter
+        :type dc: str
+
+        :param tag: Optional tag for the service
+        :type tag: str
+
+        """
         self.sink.critical_percent(value, service, dc, tag)
