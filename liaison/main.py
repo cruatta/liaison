@@ -8,10 +8,10 @@ import time
 
 def check_service(check_service_job):
     """
-    Check the availability of a consul service and send stats to StatsD.
+    Check the availability of a consul service and send stats to a Sink.
 
     :param check_service_job: Dictionary containing job specification
-    :type check_service_job: dict[str, str, ConsulConfig, StatsdConfig]
+    :type check_service_job: dict[str, str, ConsulConfig, SinkConfig]
 
     :return: Integer return code
     :rtype: int
