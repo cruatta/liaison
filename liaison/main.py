@@ -1,7 +1,6 @@
 import log
 from sink import Sink
-
-import consul
+from consul import Consul
 import multiprocessing
 import time
 
@@ -55,7 +54,7 @@ def get_dc(consul_agent):
     """
 
     :param consul_agent: A Consul object
-    :type consul_agent: consul.Consul
+    :type consul_agent: Consul
 
     :return: The datacenter of the agent
     :rtype: str
@@ -64,12 +63,24 @@ def get_dc(consul_agent):
     dc = self['Config']['Datacenter']
     return dc
 
+def get_services(consul_agent):
+    """
+
+    :param consul_agent: A Consul object
+    :type consul_agent: Consul
+
+    :return: A dictionary of services and tags
+    :rtype: dict
+    """
+    _, services = consul_agent.catalog.services()
+    return services
+
 
 def get_health_service(consul_agent, service, tag=None):
     """
 
     :param consul_agent: A Consul object
-    :type consul_agent: consul.Consul
+    :type consul_agent: Consul
     :param service: The name of the consul servie
     :type service: str
     :param tag: A tag for the service
@@ -95,9 +106,9 @@ def get_node_status(consul_health_service):
     of the result of a query to /v1/health/service/<service>
     :type consul_health_service: dict
 
-    :rtype: int, int
     :return: number of nodes without critical checks,
         number of nodes with critical checks
+    :rtype: int, int
     """
     nodes = dict()
     ok = 0
@@ -150,7 +161,7 @@ def check_service(check_service_job):
         log.error("Missing key {e} in check_service_job".format(e=e))
         return 2
 
-    consul_agent = consul.Consul(**consul_config.kwargs())
+    consul_agent = Consul(**consul_config.kwargs())
     sink = Sink(sink_config)
 
     dc = get_dc(consul_agent)
@@ -183,9 +194,9 @@ def loop(liaison_config):
     consul_config = liaison_config.consul_config
     sink_config = liaison_config.sink_config
 
-    consul_agent = consul.Consul(**consul_config.kwargs())
-    index, services = consul_agent.catalog.services()
+    consul_agent = Consul(**consul_config.kwargs())
 
+    services = get_services(consul_agent)
     check_service_jobs = create_check_service_jobs(services,
                                                    consul_config,
                                                    sink_config)
