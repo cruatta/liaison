@@ -59,4 +59,4 @@ class StatsdSinkTests(unittest.TestCase):
     def test_invalid_sink(self):
         config = SinkConfig(type="statsd")
         config.type = "invalid"
-        self.assertRaises(SinkException, Sink(config))
+        self.assertRaises(SinkException, Sink, config)
