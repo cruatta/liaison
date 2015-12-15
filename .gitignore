@@ -1,4 +1,8 @@
+*.egg
+*.egg-info
 .idea
 .vagrant
+.cache
 build
+dist
 Vagrantfile

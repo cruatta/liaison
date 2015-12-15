@@ -3,13 +3,10 @@ from liaison.config import \
     SinkConfig, StatsdOptions
 
 import sys
-if sys.version_info.major > 2:
+if sys.version >= 3:
     import unittest
 else:
-    try:
-        import unittest2 as unittest
-    except ImportError:
-        import unittest
+    import unittest2 as unittest
 
 
 class StatsdSinkTests(unittest.TestCase):
