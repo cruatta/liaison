@@ -3,7 +3,7 @@ import sys
 
 tests_require = ['pytest', 'pytest-cov', 'flake8']
 
-if sys.version < 3:
+if sys.version < '3':
     tests_require.append('unittest2')
 
 setup(name='liaison',
