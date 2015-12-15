@@ -210,10 +210,10 @@ def loop(liaison_config):
     while len(check_service_jobs) > 0:
         if len(check_service_jobs) >= pool_size:
             pool.map(check_service, [check_service_jobs.pop()
-                                     for _ in xrange(pool_size)])
+                                     for _ in range(pool_size)])
         else:
             pool.map(check_service, [check_service_jobs.pop()
-                                     for _ in xrange(len(check_service_jobs))])
+                                     for _ in range(len(check_service_jobs))])
 
         time.sleep(liaison_config.sleep)
 
