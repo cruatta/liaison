@@ -63,6 +63,7 @@ def get_dc(consul_agent):
     dc = self['Config']['Datacenter']
     return dc
 
+
 def get_services(consul_agent):
     """
 
