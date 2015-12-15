@@ -4,6 +4,7 @@ from liaison import log
 
 import statsd
 
+
 class SinkException(Exception):
     pass
 

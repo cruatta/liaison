@@ -5,7 +5,6 @@ from liaison import log
 import json
 
 
-
 class LiaisonConfig(object):
     """
     Configuration object for the Liaison app itself.
