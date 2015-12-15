@@ -9,7 +9,7 @@ class StatsdSink(object):
         :param options: Statsd configuration options
         :type options: StatsdOptions
         """
-        self.s = statsd.StatsClient(*options.args())
+        self.client = statsd.StatsClient(*options.args())
 
     def ok_count(self, value, service, dc, tag):
         """
@@ -28,11 +28,11 @@ class StatsdSink(object):
 
         """
         if tag:
-            self.s.gauge('consul.service.{dc}.{srv}.{tag}.ok.count'
-                         .format(srv=service, tag=tag, dc=dc), value)
+            self.client.gauge('consul.service.{dc}.{srv}.{tag}.ok.count'
+                              .format(srv=service, tag=tag, dc=dc), value)
         else:
-            self.s.gauge('consul.service.{dc}.{srv}.ok.count'
-                         .format(srv=service, dc=dc), value)
+            self.client.gauge('consul.service.{dc}.{srv}.ok.count'
+                              .format(srv=service, dc=dc), value)
 
     def critical_count(self, value, service, dc, tag):
         """
@@ -51,11 +51,11 @@ class StatsdSink(object):
 
         """
         if tag:
-            self.s.gauge('consul.service.{dc}.{srv}.{tag}.critical.count'
-                         .format(srv=service, tag=tag, dc=dc), value)
+            self.client.gauge('consul.service.{dc}.{srv}.{tag}.critical.count'
+                              .format(srv=service, tag=tag, dc=dc), value)
         else:
-            self.s.gauge('consul.service.{dc}.{srv}.critical.count'
-                         .format(srv=service, dc=dc), value)
+            self.client.gauge('consul.service.{dc}.{srv}.critical.count'
+                              .format(srv=service, dc=dc), value)
 
     def ok_percent(self, value, service, dc, tag):
         """
@@ -75,11 +75,11 @@ class StatsdSink(object):
 
         """
         if tag:
-            self.s.gauge('consul.service.{dc}.{srv}.{tag}.ok.percent'
-                         .format(srv=service, tag=tag, dc=dc), value)
+            self.client.gauge('consul.service.{dc}.{srv}.{tag}.ok.percent'
+                              .format(srv=service, tag=tag, dc=dc), value)
         else:
-            self.s.gauge('consul.service.{dc}.{srv}.ok.percent'
-                         .format(srv=service, dc=dc), value)
+            self.client.gauge('consul.service.{dc}.{srv}.ok.percent'
+                              .format(srv=service, dc=dc), value)
 
     def critical_percent(self, value, service, dc, tag):
         """
@@ -99,11 +99,11 @@ class StatsdSink(object):
 
         """
         if tag:
-            self.s.gauge('consul.service.{dc}.{srv}.{tag}.critical.percent'
-                         .format(srv=service, tag=tag, dc=dc), value)
+            self.client.gauge('consul.service.{dc}.{srv}.{tag}.critical.percent'
+                              .format(srv=service, tag=tag, dc=dc), value)
         else:
-            self.s.gauge('consul.service.{dc}.{srv}.critical.percent'
-                         .format(srv=service, dc=dc), value)
+            self.client.gauge('consul.service.{dc}.{srv}.critical.percent'
+                              .format(srv=service, dc=dc), value)
 
 
 class Sink(object):
