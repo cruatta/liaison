@@ -2,6 +2,10 @@ import statsd
 import log
 
 
+class SinkException(Exception):
+    pass
+
+
 class StatsdSink(object):
 
     def __init__(self, options):
@@ -201,7 +205,3 @@ class Sink(object):
 
         """
         return self.sink.critical_percent(value, service, dc, tag)
-
-
-class SinkException(Exception):
-    pass
