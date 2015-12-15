@@ -57,7 +57,6 @@ class StatsdSinkTests(unittest.TestCase):
             'consul.service.dc1.srv1.tag.critical.count', 3, None))
 
     def test_invalid_sink(self):
-        with self.assertRaises(SinkException):
-            config = SinkConfig(type="statsd")
-            config.type = "invalid"
-            Sink(config)
+        config = SinkConfig(type="statsd")
+        config.type = "invalid"
+        self.assertRaises(SinkException, Sink(config))
