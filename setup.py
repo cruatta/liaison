@@ -1,7 +1,7 @@
 from setuptools import setup
 import sys
 
-tests_require = ['pytest', 'pytest-cov', 'flake8']
+tests_require = ['pytest', 'flake8']
 
 if sys.version < '3':
     tests_require.append('unittest2')
