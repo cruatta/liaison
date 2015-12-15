@@ -1,7 +1,8 @@
 from __future__ import absolute_import
-import statsd
-import log
 
+from liaison import log
+
+import statsd
 
 class SinkException(Exception):
     pass

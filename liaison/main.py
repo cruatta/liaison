@@ -1,6 +1,8 @@
 from __future__ import absolute_import
-import log
-from sink import Sink
+
+from liaison import log
+from liaison.sink import Sink
+
 from consul import Consul
 import multiprocessing
 import time

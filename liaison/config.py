@@ -1,6 +1,9 @@
 from __future__ import absolute_import
+
+from liaison import log
+
 import json
-import log
+
 
 
 class LiaisonConfig(object):
