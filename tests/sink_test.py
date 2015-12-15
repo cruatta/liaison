@@ -3,7 +3,7 @@ from liaison.config import \
     SinkConfig, StatsdOptions
 
 import sys
-if sys.version >= 3:
+if sys.version >= '3':
     import unittest
 else:
     import unittest2 as unittest
