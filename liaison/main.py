@@ -106,16 +106,17 @@ def check_service(check_service_job):
         consul_config = check_service_job['consul_config']
         sink_config = check_service_job['sink_config']
     except KeyError as e:
-        log.error("Missing key {e} in check_service_job".format(e=e))
+        log.error(
+            "check_service | Missing key {e} in check_service_job".format(
+                e=e))
         return 2
 
     consul = Consul(consul_config)
     sink = Sink(sink_config)
 
     dc = consul.get_dc()
-    log.debug('Running service availability check on '
-              'Service:{service} Tag:{tag} DC:{dc}'.format(service=service,
-                                                           tag=tag, dc=dc))
+    log.debug('check_service | Service:{service} Tag:{tag} DC:{dc}'.format(
+        service=service,tag=tag, dc=dc))
 
     consul_health_service = consul.get_health_service(service, tag)
     ok, critical = get_node_status(consul_health_service)
