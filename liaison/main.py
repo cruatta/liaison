@@ -116,7 +116,7 @@ def check_service(check_service_job):
 
     dc = consul.get_dc()
     log.debug('check_service | Service:{service} Tag:{tag} DC:{dc}'.format(
-        service=service,tag=tag, dc=dc))
+        service=service, tag=tag, dc=dc))
 
     consul_health_service = consul.get_health_service(service, tag)
     ok, critical = get_node_status(consul_health_service)
