@@ -2,8 +2,8 @@ from __future__ import absolute_import
 
 from liaison import log
 from liaison.sink import Sink
+from liaison.consul import Consul
 
-from consul import Consul
 import multiprocessing
 import time
 
@@ -15,8 +15,8 @@ class Liaison(object):
     def create_pool(config):
         """
 
-        :param liaison_config: LiaisonConfig object
-        :type liaison_config: LiaisonConfig
+        :param config: LiaisonConfig object
+        :type config: LiaisonConfig
 
         :return pool, pool_size: A multiprocessing pool and the size
         the pool should be.
@@ -36,10 +36,6 @@ class Liaison(object):
 
         :param services: A dict of services and tags
         :type services: dict
-        :param consul_config: Consul Config
-        :type consul_config: ConsulConfig
-        :param sink_config: Sink Config
-        :type sink_config: SinkConfig
 
         :return: A list of check service jobs
         :rtype: dict
@@ -65,10 +61,9 @@ class Liaison(object):
         """
 
         consul_config = self.config.consul_config
+        consul = Consul(consul_config)
 
-        consul_agent = Consul(**consul_config.kwargs())
-
-        services = get_services(consul_agent)
+        services = consul.get_services()
         check_service_jobs = self.create_check_service_jobs(services)
 
         pool, pool_size = self.create_pool(self.config)
@@ -87,7 +82,6 @@ class Liaison(object):
 
         pool.close()
         pool.join()
-
 
 def check_service(check_service_job):
     """
@@ -109,15 +103,15 @@ def check_service(check_service_job):
         log.error("Missing key {e} in check_service_job".format(e=e))
         return 2
 
-    consul_agent = Consul(**consul_config.kwargs())
+    consul = Consul(consul_config)
     sink = Sink(sink_config)
 
-    dc = get_dc(consul_agent)
+    dc = consul.get_dc()
     log.debug('Running service availability check on '
               'Service:{service} Tag:{tag} DC:{dc}'.format(service=service,
                                                            tag=tag, dc=dc))
 
-    consul_health_service = get_health_service(consul_agent, service, tag)
+    consul_health_service = consul.get_health_service(service, tag)
     ok, critical = get_node_status(consul_health_service)
 
     sink.ok_count(ok, service, dc, tag)
@@ -171,53 +165,3 @@ def get_node_status(consul_health_service):
             ok += 1
 
     return ok, critical
-
-
-def get_dc(consul_agent):
-    """
-
-    :param consul_agent: A Consul object
-    :type consul_agent: Consul
-
-    :return: The datacenter of the agent
-    :rtype: str
-    """
-    self = consul_agent.agent.self()
-    dc = self['Config']['Datacenter']
-    return dc
-
-
-def get_services(consul_agent):
-    """
-
-    :param consul_agent: A Consul object
-    :type consul_agent: Consul
-
-    :return: A dictionary of services and tags
-    :rtype: dict
-    """
-    _, services = consul_agent.catalog.services()
-    return services
-
-
-def get_health_service(consul_agent, service, tag=None):
-    """
-
-    :param consul_agent: A Consul object
-    :type consul_agent: Consul
-    :param service: The name of the consul servie
-    :type service: str
-    :param tag: A tag for the service
-    :type tag: str|None
-
-    :return: A dictionary of representation of the result of
-    a query to /v1/health/service/<service>
-    :rtype: dict
-
-    """
-    if tag:
-        _, health_service = consul_agent.health.service(service, tag=tag)
-    else:
-        _, health_service = consul_agent.health.service(service)
-
-    return health_service
