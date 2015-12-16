@@ -35,7 +35,11 @@ class MainTests(unittest.TestCase):
         self.assertTrue(pool_size == 10)
 
     def test_create_service_jobs(self):
-        from types import NoneType, StringType
+        try:
+            from types import NoneType
+        except ImportError:
+            NoneType = type(None)
+        from types import StringType
         from liaison.config import ConsulConfig, SinkConfig
         services = dict()
         services['srv1'] = [None, 'tag1']
