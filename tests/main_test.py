@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 import sys
-from liaison.main import Liaison
+from liaison.main import Liaison, get_node_status
 from liaison.config import LiaisonConfig
 if sys.version >= '3':
     import unittest
@@ -50,3 +50,56 @@ class MainTests(unittest.TestCase):
             self.assertTrue(isinstance(job['consul_config'], ConsulConfig))
             self.assertTrue('sink_config' in job)
             self.assertTrue(isinstance(job['sink_config'], SinkConfig))
+
+    def test_get_node_status(self):
+        nodes = list()
+        node_a = {
+            'Node': {
+                'Node': 'node_c'
+            },
+            'Checks': []
+        }
+        node_b = {
+            'Node': {
+                'Node': 'node_b'
+            },
+            'Checks': [
+                {
+                    'Status': 'passing'
+                },
+                {
+                    'Status': 'passing'
+                },
+                {
+                    'Status': 'warning'
+                },
+                {
+                    'Status': 'bogus'
+                }
+            ]
+        }
+        node_c = {
+            'Node': {
+                'Node': 'node_a'
+            },
+            'Checks': [
+                {
+                    'Status': 'passing'
+                },
+                {
+                    'Status': 'critical'
+                },
+                {
+                    'Status': 'warning'
+                },
+                {
+                    'Status': 'bogus'
+                }
+            ]
+        }
+        nodes.append(node_a)
+        self.assertEqual(get_node_status(nodes), (1, 0))
+        nodes.append(node_b)
+        self.assertEqual(get_node_status(nodes), (2, 0))
+        nodes.append(node_c)
+        self.assertEqual(get_node_status(nodes), (2, 1))

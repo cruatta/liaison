@@ -44,6 +44,9 @@ class Liaison(object):
         """
         check_service_jobs = list()
         for name, tags in iteritems(services):
+            log.debug("check_service_jobs | Name: {0} | Tags: {1}".format(
+                name, tags
+            ))
             for tag in tags:
                 check_service_jobs.append(
                     {'service': name, 'tag': tag,
@@ -133,7 +136,7 @@ def get_node_status(consul_health_service):
 
     :param consul_health_service: A dictionary of representation
     of the result of a query to /v1/health/service/<service>
-    :type consul_health_service: dict
+    :type consul_health_service: list
 
     :return: number of nodes without critical checks,
         number of nodes with critical checks
@@ -153,6 +156,9 @@ def get_node_status(consul_health_service):
             nodes[name]['critical'] = 0
 
         for check in node['Checks']:
+            log.debug("get_node_status | Node: {0} | Check: {1}".format(
+                name, check
+            ))
             if check['Status'] == 'passing':
                 nodes[name]['passing'] += 1
             elif check['Status'] == 'warning':
@@ -160,6 +166,9 @@ def get_node_status(consul_health_service):
             elif check['Status'] == 'critical':
                 nodes[name]['critical'] += 1
             else:
+                log.warning(
+                    'get_node_status | Node {0} has check with unexpected'
+                    ' status | Check: {1}'.format(name, check))
                 continue
 
         if nodes[name]['critical'] > 0:
