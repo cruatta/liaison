@@ -4,7 +4,7 @@ from consul import Consul as ConsulAPI
 
 class Consul(object):
     def __init__(self, config):
-        self.consul = ConsulAPI(**config.kwargs())
+        self.api = ConsulAPI(**config.kwargs())
 
     def get_dc(self):
         """
@@ -12,7 +12,7 @@ class Consul(object):
         :return: The datacenter of the agent
         :rtype: str
         """
-        s = self.consul.agent.self()
+        s = self.api.agent.self()
         dc = s['Config']['Datacenter']
         return dc
 
@@ -22,7 +22,7 @@ class Consul(object):
         :return: A dictionary of services and tags
         :rtype: dict
         """
-        _, services = self.consul.catalog.services()
+        _, services = self.api.catalog.services()
         return services
 
     def get_health_service(self, service, tag=None):
@@ -39,8 +39,8 @@ class Consul(object):
 
         """
         if tag:
-            _, health_service = self.consul.health.service(service, tag=tag)
+            _, health_service = self.api.health.service(service, tag=tag)
         else:
-            _, health_service = self.consul.health.service(service)
+            _, health_service = self.api.health.service(service)
 
         return health_service
