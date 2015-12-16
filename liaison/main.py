@@ -4,7 +4,7 @@ from liaison import log
 from liaison.sink import Sink
 from liaison.consul import Consul
 
-import multiprocessing
+from multiprocessing import Pool, cpu_count
 import time
 
 
@@ -21,14 +21,14 @@ class Liaison(object):
 
         :return pool, pool_size: A multiprocessing pool and the size
         the pool should be.
-        :rtype: multiprocessing.Pool, int
+        :rtype: Pool, int
         """
         if config.pool_size is None:
-            pool_size = multiprocessing.cpu_count()
+            pool_size = cpu_count()
         else:
             pool_size = config.pool_size
 
-        pool = multiprocessing.Pool(pool_size)
+        pool = Pool(pool_size)
 
         return pool, pool_size
 
