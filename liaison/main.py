@@ -6,6 +6,7 @@ from liaison.consul import Consul
 
 from multiprocessing import Pool, cpu_count
 import time
+from six import iteritems
 
 
 class Liaison(object):
@@ -42,7 +43,7 @@ class Liaison(object):
         :rtype: dict
         """
         check_service_jobs = list()
-        for name, tags in services.iteritems():
+        for name, tags in iteritems(services):
             for tag in tags:
                 check_service_jobs.append(
                     {'service': name, 'tag': tag,
