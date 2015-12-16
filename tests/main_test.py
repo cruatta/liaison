@@ -35,11 +35,6 @@ class MainTests(unittest.TestCase):
         self.assertTrue(pool_size == 10)
 
     def test_create_service_jobs(self):
-        try:
-            from types import NoneType, StringType
-        except ImportError:
-            NoneType = type(None)
-            StringType = type(str())
         from liaison.config import ConsulConfig, SinkConfig
         services = dict()
         services['srv1'] = [None, 'tag1']
@@ -48,10 +43,10 @@ class MainTests(unittest.TestCase):
         jobs = self.liaison.create_check_service_jobs(services)
         for job in jobs:
             self.assertTrue('service' in job)
-            self.assertTrue(type(job['service']) is StringType)
+            self.assertTrue(isinstance(job['service'], str))
             self.assertTrue('tag' in job)
-            self.assertTrue(type(job['tag']) is StringType or NoneType)
+            self.assertTrue(isinstance(job['tag'], str) or job['tag'] is None)
             self.assertTrue('consul_config' in job)
-            self.assertTrue(type(job['consul_config']) is ConsulConfig)
+            self.assertTrue(isinstance(job['consul_config'], ConsulConfig))
             self.assertTrue('sink_config' in job)
-            self.assertTrue(type(job['sink_config']) is SinkConfig)
+            self.assertTrue(isinstance(job['sink_config'], SinkConfig))
