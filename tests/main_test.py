@@ -36,10 +36,10 @@ class MainTests(unittest.TestCase):
 
     def test_create_service_jobs(self):
         try:
-            from types import NoneType
+            from types import NoneType, StringType
         except ImportError:
             NoneType = type(None)
-        from types import StringType
+            StringType = type(str())
         from liaison.config import ConsulConfig, SinkConfig
         services = dict()
         services['srv1'] = [None, 'tag1']
