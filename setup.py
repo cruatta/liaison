@@ -16,7 +16,7 @@ setup(name='liaison',
       scripts=['bin/liaison'],
       package_data={'liaison': ['README.md', 'LICENSE.txt']},
       license='MIT',
-      install_requires=['python-consul', 'statsd', 'argparse'],
+      install_requires=['python-consul', 'statsd', 'argparse', 'six'],
       tests_require=tests_require,
       setup_requires=['pytest-runner'],
       )
