@@ -1,5 +1,5 @@
 #!/usr/bin/python2.7
-from liaison.main import loop
+from liaison.main import Liaison
 from liaison.config import load_config, LiaisonConfig
 import argparse
 
@@ -8,12 +8,14 @@ def main():
     parser.add_argument('--config', help='Configuration file path')
     args = parser.parse_args()
     if 'config' in args and args.config is not None:
-        lc = load_config(args.config)
+        config = load_config(args.config)
     else:
-        lc = LiaisonConfig()
+        config = LiaisonConfig()
+
+    liaison = Liaison(config)
 
     while True:
-        loop(lc)
+        liaison.loop()
 
 if __name__ == "__main__":
     main()
