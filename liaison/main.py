@@ -7,6 +7,7 @@ from liaison.consul import Consul
 import multiprocessing
 import time
 
+
 class Liaison(object):
     def __init__(self, config):
         self.config = config
@@ -82,6 +83,7 @@ class Liaison(object):
 
         pool.close()
         pool.join()
+
 
 def check_service(check_service_job):
     """
