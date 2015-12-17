@@ -1,8 +1,10 @@
 from __future__ import absolute_import
 
 import sys
-from liaison.main import Liaison, get_node_status
+from liaison.main import Liaison, get_node_status, check_service
 from liaison.config import LiaisonConfig
+import liaison.consul
+import liaison
 
 if sys.version >= '3.3':
     import unittest
@@ -124,11 +126,7 @@ class MainTests(unittest.TestCase):
     # https://bugs.python.org/issue23078
     # Leaving it off create_pool
 
-    # FYI these can also be patched like this:
-    # @mock.patch.object(liaison.consul.Consul, 'get_services', autospec=True)
-    # @mock.patch.object(liaison.main.Liaison, 'create_pool')
-    #
-    @mock.patch('liaison.consul.Consul.get_services', autospec=True)
+    @mock.patch('liaison.main.Consul.get_services', autospec=True)
     @mock.patch('liaison.main.Liaison.create_pool')
     @mock.patch('liaison.main.Liaison.create_check_service_jobs',
                 side_effect=stub_create_check_service_jobs, autospec=True)
@@ -148,7 +146,7 @@ class MainTests(unittest.TestCase):
         self.assertEqual(6, mock_pool.map.call_count)
         self.assertEqual(1, mock_create_check_service_jobs.call_count)
 
-    @mock.patch('liaison.consul.Consul.get_services', autospec=True)
+    @mock.patch('liaison.main.Consul.get_services', autospec=True)
     @mock.patch('liaison.main.Liaison.create_pool')
     @mock.patch('liaison.main.Liaison.create_check_service_jobs',
                 side_effect=stub_create_check_service_jobs, autospec=True)
@@ -167,3 +165,28 @@ class MainTests(unittest.TestCase):
 
         self.assertEqual(1, mock_pool.map.call_count)
         self.assertEqual(1, mock_create_check_service_jobs.call_count)
+
+    def test_check_service_bad_service(self):
+        self.assertRaises(KeyError, check_service, dict())
+        self.assertRaises(KeyError, check_service, {
+            'service': 'x',
+            'tag': None,
+            'consul_config': 'x'
+        })
+
+    @mock.patch('liaison.main.get_node_status', autospec=True)
+    @mock.patch('liaison.main.Sink', autospec=True)
+    @mock.patch('liaison.main.Consul', autospec=True)
+    def test_check_service(self, mock_consul, mock_sink,
+                           mock_get_node_status):
+
+        mock_get_node_status.return_value = (1, 2)
+
+        ret = check_service({
+                'service': 'test',
+                'tag': None,
+                'consul_config': None,
+                'sink_config': None
+        })
+
+        self.assertEqual(ret, 0)

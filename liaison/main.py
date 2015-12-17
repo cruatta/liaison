@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from liaison import log
 from liaison.sink import Sink
 from liaison.consul import Consul
+from liaison.config import ConsulConfig, SinkConfig
 
 from multiprocessing import Pool, cpu_count
 import time
@@ -109,7 +110,7 @@ def check_service(check_service_job):
         log.error(
             "check_service | Missing key {e} in check_service_job".format(
                 e=e))
-        return 2
+        raise e
 
     consul = Consul(consul_config)
     sink = Sink(sink_config)
@@ -135,7 +136,7 @@ def check_service(check_service_job):
 def get_node_status(consul_health_service):
     """
 
-    :param consul_health_service: A dictionary of representation
+    :param consul_health_service: A list of representation
     of the result of a query to /v1/health/service/<service>
     :type consul_health_service: list
 

@@ -34,9 +34,9 @@ class Consul(object):
         :param tag: A tag for the service
         :type tag: str|None
 
-        :return: A dictionary of representation of the result of
+        :return: A list of representation of the result of
         a query to /v1/health/service/<service>
-        :rtype: dict
+        :rtype: list
 
         """
         if tag:
