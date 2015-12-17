@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from liaison.sink import Sink, StatsdSink, SinkException
 from liaison.config import \
     SinkConfig, StatsdOptions
