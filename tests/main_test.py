@@ -4,9 +4,12 @@ import sys
 from liaison.main import Liaison, get_node_status
 from liaison.config import LiaisonConfig
 
-if sys.version >= '3':
+if sys.version >= '3.3':
     import unittest
     import unittest.mock as mock
+elif sys.version >= '3':
+    import unittest
+    import mock
 else:
     import unittest2 as unittest
     import mock
