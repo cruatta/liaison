@@ -3,8 +3,6 @@ from __future__ import absolute_import
 import sys
 from liaison.main import Liaison, get_node_status, check_service
 from liaison.config import LiaisonConfig
-import liaison.consul
-import liaison
 
 if sys.version >= '3.3':
     import unittest
@@ -183,10 +181,10 @@ class MainTests(unittest.TestCase):
         mock_get_node_status.return_value = (1, 2)
 
         ret = check_service({
-                'service': 'test',
-                'tag': None,
-                'consul_config': None,
-                'sink_config': None
+            'service': 'test',
+            'tag': None,
+            'consul_config': None,
+            'sink_config': None
         })
 
         self.assertEqual(ret, 0)

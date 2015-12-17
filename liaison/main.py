@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from liaison import log
 from liaison.sink import Sink
 from liaison.consul import Consul
-from liaison.config import ConsulConfig, SinkConfig
+from liaison.config import ConsulConfig, SinkConfig, LiaisonConfig
 
 from multiprocessing import Pool, cpu_count
 import time
