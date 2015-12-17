@@ -108,7 +108,7 @@ def check_service(check_service_job):
         sink_config = check_service_job['sink_config']
     except KeyError as e:
         log.error(
-            "check_service | Missing key {e} in check_service_job".format(
+            "check_service | Missing key {e} in check_service_job dict".format(
                 e=e))
         raise e
 
