@@ -164,4 +164,3 @@ class MainTests(unittest.TestCase):
 
         self.assertEqual(1, mock_pool.map.call_count)
         self.assertEqual(1, mock_create_check_service_jobs.call_count)
-
