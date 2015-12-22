@@ -194,8 +194,8 @@ class MainTests(unittest.TestCase):
         sink.critical_count.assert_called_with(
             4.0, 'test', 'dc1', None)
         sink.ok_percent.assert_called_with(
-            25.0, 'test', 'dc1', None)
+            20.0, 'test', 'dc1', None)
         sink.critical_percent.assert_called_with(
-            75.0, 'test', 'dc1', None)
+            80.0, 'test', 'dc1', None)
 
         self.assertEqual(ret, 0)
