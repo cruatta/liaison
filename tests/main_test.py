@@ -178,7 +178,7 @@ class MainTests(unittest.TestCase):
     def test_check_service(self, mock_consul, mock_sink,
                            mock_get_node_status):
 
-        mock_get_node_status.return_value = (1, 2)
+        mock_get_node_status.return_value = (1.0, 2.0)
         mock_consul.get_dc.return_value = 'dc1'
 
         ret = check_service({
@@ -188,5 +188,5 @@ class MainTests(unittest.TestCase):
             'sink_config': None
         })
 
-        mock_consul.get_health_service.assert_called_with('test', None)
+        mock_sink.ok_count.assert_called_with(1.0, 'test', 'dc1', None)
         self.assertEqual(ret, 0)
