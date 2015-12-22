@@ -179,6 +179,7 @@ class MainTests(unittest.TestCase):
                            mock_get_node_status):
 
         mock_get_node_status.return_value = (1, 2)
+        mock_consul.get_dc.return_value = 'dc1'
 
         ret = check_service({
             'service': 'test',
@@ -187,4 +188,5 @@ class MainTests(unittest.TestCase):
             'sink_config': None
         })
 
+        mock_consul.get_health_service.assert_called_with('test', None)
         self.assertEqual(ret, 0)
