@@ -179,7 +179,7 @@ class MainTests(unittest.TestCase):
                            mock_get_node_status):
 
         mock_get_node_status.return_value = (1.0, 2.0)
-        mock_consul.get_dc.return_value = 'dc1'
+        mock_consul.return_value.get_dc.return_value = 'dc1'
 
         ret = check_service({
             'service': 'test',
