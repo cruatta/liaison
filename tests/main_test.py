@@ -180,6 +180,7 @@ class MainTests(unittest.TestCase):
 
         mock_get_node_status.return_value = (1.0, 4.0)
         mock_consul.return_value.get_dc.return_value = 'dc1'
+        sink = mock_sink.return_value
 
         ret = check_service({
             'service': 'test',
@@ -188,13 +189,13 @@ class MainTests(unittest.TestCase):
             'sink_config': None
         })
 
-        mock_sink.ok_count.assert_called_with(
+        sink.ok_count.assert_called_with(
             1.0, 'test', 'dc1', None)
-        mock_sink.critical_count.assert_called_with(
+        sink.critical_count.assert_called_with(
             4.0, 'test', 'dc1', None)
-        mock_sink.ok_percent.assert_called_with(
+        sink.ok_percent.assert_called_with(
             25.0, 'test', 'dc1', None)
-        mock_sink.critical_percent.assert_called_with(
+        sink.critical_percent.assert_called_with(
             75.0, 'test', 'dc1', None)
 
         self.assertEqual(ret, 0)
