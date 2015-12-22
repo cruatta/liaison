@@ -126,8 +126,8 @@ def check_service(check_service_job):
     sink.critical_count(critical, service, dc, tag)
 
     if ok + critical > 0:
-        sink.ok_percent(float((ok / (ok + critical))), service, dc, tag)
-        sink.critical_percent(float((critical / (ok + critical))),
+        sink.ok_percent((ok / (ok + critical)) * 100, service, dc, tag)
+        sink.critical_percent((critical / (ok + critical)) * 100,
                               service, dc, tag)
 
     return 0
@@ -142,11 +142,11 @@ def get_node_status(consul_health_service):
 
     :return: number of nodes without critical checks,
         number of nodes with critical checks
-    :rtype: int, int
+    :rtype: float, float
     """
     nodes = dict()
-    ok = 0
-    critical = 0
+    ok = 0.0
+    critical = 0.0
 
     for node in consul_health_service:
         name = node['Node']['Node']
