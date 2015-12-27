@@ -44,12 +44,14 @@ class ConfigTests(unittest.TestCase):
             'consul': {},
             'sink': {
                 'options': {
-                    'host': '127.0.0.1'
+                    'host': '192.168.0.1',
+                    'port': 8135
                 }
             }
         }
 
         lc = load_config('')
+        self.assertEqual(lc.sink_config.opts.args(), ['192.168.0.1', 8135])
 
     @mock.patch('liaison.config.json.load')
     @mock.patch('liaison.config.open')
@@ -64,7 +66,6 @@ class ConfigTests(unittest.TestCase):
             }
         }
         try:
-            lc = load_config('')
+            load_config('')
         except Exception as e:
             self.assertEqual(e.message, 'Invalid Sink configuration.')
-
