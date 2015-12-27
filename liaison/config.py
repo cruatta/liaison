@@ -27,12 +27,12 @@ class LiaisonConfig(object):
         self.pool_size = pool_size
         self.sleep = sleep
 
-        if consul_config is type(ConsulConfig):
+        if isinstance(consul_config, ConsulConfig):
             self.consul_config = consul_config
         else:
             self.consul_config = ConsulConfig()
 
-        if sink_config is type(SinkConfig):
+        if isinstance(sink_config, SinkConfig):
             self.sink_config = sink_config
         else:
             self.sink_config = SinkConfig()
