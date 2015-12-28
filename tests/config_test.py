@@ -1,7 +1,9 @@
 from __future__ import absolute_import
 
 import sys
-from liaison.config import LiaisonConfig, ConsulConfig, SinkConfig, load_config
+from liaison.config import LiaisonConfig, \
+    ConsulConfig, SinkConfig, StatsdOptions,\
+    load_config
 
 if sys.version >= '3.3':
     import unittest
@@ -17,6 +19,43 @@ else:
 class ConfigTests(unittest.TestCase):
     def setUp(self):
         pass
+
+    def test_liaison_config(self):
+        cc = ConsulConfig()
+        sc = SinkConfig()
+        l = LiaisonConfig()
+        self.assertEqual(l.consul_config.kwargs(), cc.kwargs())
+        self.assertEqual(l.sink_config.type, sc.type)
+        self.assertEqual(l.sink_config.opts.args(), sc.opts.args())
+
+    def test_invalid_consul_config_liaison_config(self):
+        try:
+            LiaisonConfig(consul_config=99)
+        except Exception as e:
+            self.assertEqual(
+                str(e),
+                "LiaisonConfig | Bad consul_config parameter. Invalid type")
+
+    def test_invalid_sink_config_liaison_config(self):
+        try:
+            LiaisonConfig(sink_config=99)
+        except Exception as e:
+            self.assertEqual(
+                str(e),
+                "LiaisonConfig | Bad sink_config parameter. Invalid type")
+
+    def test_valid_consul_config_liaison_config(self):
+        host = '192.168.0.1'
+        cc = ConsulConfig(host=host)
+        l = LiaisonConfig(consul_config=cc)
+        self.assertEqual(l.consul_config.host, host)
+
+    def test_valid_sink_config_liaison_config(self):
+        host = '192.168.0.1'
+        port = '9999'
+        sc = SinkConfig(options={'host': host, 'port': port})
+        l = LiaisonConfig(sink_config=sc)
+        self.assertEqual(l.sink_config.opts.args(), [host, port])
 
     @mock.patch('liaison.config.json.load')
     @mock.patch('liaison.config.open', create=True)

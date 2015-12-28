@@ -27,6 +27,7 @@ class LiaisonConfig(object):
         self.pool_size = pool_size
         self.sleep = sleep
         if isinstance(consul_config, type(None)):
+            log.debug("LiaisonConfig | Using default ConsulConfig")
             self.consul_config = ConsulConfig()
         elif isinstance(consul_config, ConsulConfig):
             self.consul_config = consul_config
@@ -35,6 +36,7 @@ class LiaisonConfig(object):
                 "LiaisonConfig | Bad consul_config parameter. Invalid type")
 
         if isinstance(sink_config, type(None)):
+            log.debug("LiaisonConfig | Using default SinkConfig")
             self.sink_config = SinkConfig()
         elif isinstance(sink_config, SinkConfig):
             self.sink_config = sink_config
