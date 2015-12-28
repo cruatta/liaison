@@ -37,11 +37,14 @@ class ConfigTests(unittest.TestCase):
 
     @mock.patch('liaison.config.json.load')
     @mock.patch('liaison.config.open')
-    def test_load_config_sink_options(self, mock_open, mock_load):
+    def test_load_config_with_options(self, mock_open, mock_load):
         mock_load.return_value = {
             'pool_size': 3,
             'sleep': 1,
-            'consul': {},
+            'consul': {
+                'consistency': 'stale',
+                'dc': 'dc99'
+            },
             'sink': {
                 'options': {
                     'host': '192.168.0.1',
@@ -52,6 +55,15 @@ class ConfigTests(unittest.TestCase):
 
         lc = load_config('')
         self.assertEqual(lc.sink_config.opts.args(), ['192.168.0.1', 8135])
+        self.assertEqual(lc.consul_config.kwargs(), {
+            'host': '127.0.0.1',
+            'port': 8500,
+            'token': None,
+            'scheme': 'http',
+            'consistency': 'stale',
+            'dc': 'dc99',
+            'verify': True
+        })
 
     @mock.patch('liaison.config.json.load')
     @mock.patch('liaison.config.open')
