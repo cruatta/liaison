@@ -19,7 +19,7 @@ class ConfigTests(unittest.TestCase):
         pass
 
     @mock.patch('liaison.config.json.load')
-    @mock.patch('liaison.config.open')
+    @mock.patch('liaison.config.open', create=True)
     def test_load_config(self, mock_open, mock_load):
         mock_load.return_value = {
             'pool_size': 3,
@@ -36,7 +36,7 @@ class ConfigTests(unittest.TestCase):
         self.assertIsInstance(lc.sink_config, SinkConfig)
 
     @mock.patch('liaison.config.json.load')
-    @mock.patch('liaison.config.open')
+    @mock.patch('liaison.config.open', create=True)
     def test_load_config_with_options(self, mock_open, mock_load):
         mock_load.return_value = {
             'pool_size': 3,
@@ -66,7 +66,7 @@ class ConfigTests(unittest.TestCase):
         })
 
     @mock.patch('liaison.config.json.load')
-    @mock.patch('liaison.config.open')
+    @mock.patch('liaison.config.open', create=True)
     def test_load_config_bad_sink_options(self, mock_open, mock_load):
         mock_load.return_value = {
             'pool_size': 3,
