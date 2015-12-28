@@ -26,16 +26,21 @@ class LiaisonConfig(object):
         """
         self.pool_size = pool_size
         self.sleep = sleep
-
-        if consul_config is type(ConsulConfig):
+        if isinstance(consul_config, type(None)):
+            self.consul_config = ConsulConfig()
+        elif isinstance(consul_config, ConsulConfig):
             self.consul_config = consul_config
         else:
-            self.consul_config = ConsulConfig()
+            raise Exception(
+                "LiaisonConfig | Bad consul_config parameter. Invalid type")
 
-        if sink_config is type(SinkConfig):
+        if isinstance(sink_config, type(None)):
+            self.sink_config = SinkConfig()
+        elif isinstance(sink_config, SinkConfig):
             self.sink_config = sink_config
         else:
-            self.sink_config = SinkConfig()
+            raise Exception(
+                "LiaisonConfig | Bad sink_config parameter. Invalid type")
 
 
 class ConsulConfig(object):

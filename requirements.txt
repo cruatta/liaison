@@ -1,4 +1,4 @@
-python-consul
-statsd
+python-consul>=0.4.7
+statsd>=3.2.1
 argparse
 six
