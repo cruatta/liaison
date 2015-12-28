@@ -80,4 +80,4 @@ class ConfigTests(unittest.TestCase):
         try:
             load_config('')
         except Exception as e:
-            self.assertEqual(e.message, 'Invalid Sink configuration.')
+            self.assertEqual(e, 'Invalid Sink configuration.')
