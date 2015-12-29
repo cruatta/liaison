@@ -7,7 +7,8 @@ class Consul(object):
     def __init__(self, config):
         """
 
-        :param config:
+        :param config: A ConsulConfig object containing settings for
+        Consul (ConsulAPI)
         :type config: ConsulConfig
         """
         self.api = ConsulAPI(**config.kwargs())
