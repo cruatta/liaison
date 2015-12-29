@@ -1,21 +1,25 @@
 from __future__ import absolute_import
-
+from liaison.config import ConsulConfig
 from consul import Consul as ConsulAPI
 
 
 class Consul(object):
     def __init__(self, config):
+        """
+
+        :param config: A ConsulConfig object containing settings for
+        Consul (ConsulAPI)
+        :type config: ConsulConfig
+        """
         self.api = ConsulAPI(**config.kwargs())
 
     def get_dc(self):
         """
 
-        :return: The datacenter of the agent
+        :return: The datacenter specified for use by the API
         :rtype: str
         """
-        s = self.api.agent.self()
-        dc = s['Config']['Datacenter']
-        return dc
+        return self.api.dc
 
     def get_services(self):
         """
