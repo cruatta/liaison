@@ -23,4 +23,3 @@ class ConsulTests(unittest.TestCase):
         cc = config.ConsulConfig(dc=dc)
         c = consul.Consul(cc)
         self.assertEquals(dc, c.api.dc)
-
